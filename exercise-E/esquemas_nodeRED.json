@@ -1,0 +1,459 @@
+[
+    {
+        "id": "192b46e5418e8275",
+        "type": "tab",
+        "label": "PIR+SERVO",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f07766289dc308bd",
+        "type": "serial in",
+        "z": "192b46e5418e8275",
+        "name": "PIR+Servo",
+        "serial": "efdacdd8538ba6ea",
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "e02fec052a6b68a6"
+            ]
+        ]
+    },
+    {
+        "id": "e02fec052a6b68a6",
+        "type": "json",
+        "z": "192b46e5418e8275",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 310,
+        "y": 220,
+        "wires": [
+            [
+                "f86bf4412f85844c",
+                "41ff635a403db1f4"
+            ]
+        ]
+    },
+    {
+        "id": "f86bf4412f85844c",
+        "type": "function",
+        "z": "192b46e5418e8275",
+        "name": "Detección de movimiento + Puerta",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\n\n//Extraer atributos del JSON\nvar pir = {};\nvar alarma = {};\nvar estado_puerta = {};\n//Pasar información del json\npir.payload = newMsg.payload.pir;\nalarma.payload = newMsg.payload.alarma;\nestado_puerta.payload = newMsg.payload.estado_puerta;\n//Retornar valores en cualquier orden\n\nreturn [pir, alarma, estado_puerta];",
+        "outputs": 3,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 120,
+        "wires": [
+            [
+                "2310e3837a7e7ae1"
+            ],
+            [
+                "2f784116cebce355"
+            ],
+            [
+                "ad0eab3a192e55d9",
+                "bc1843be7cf8ea59"
+            ]
+        ]
+    },
+    {
+        "id": "2310e3837a7e7ae1",
+        "type": "ui_gauge",
+        "z": "192b46e5418e8275",
+        "name": "",
+        "group": "fc8784223b190d5b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "donut",
+        "title": "Estado de HC-SR501",
+        "label": "Activo o Inactivo",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "1",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 860,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f74c7aabc09c1af8",
+        "type": "telegram sender",
+        "z": "192b46e5418e8275",
+        "name": "BotAlarmas",
+        "bot": "e4951fa52faf93e8",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 870,
+        "y": 240,
+        "wires": [
+            [
+                "f5497c32ae0cceec"
+            ]
+        ]
+    },
+    {
+        "id": "c83e288ff1647a20",
+        "type": "function",
+        "z": "192b46e5418e8275",
+        "name": "Mensaje de telegram",
+        "func": "//Creacion de variable para almacenar el mensaje a Telegram\n\nvar telegramMsg = {}\n\n//Pasar la carga util al metodo msg.payload\ntelegramMsg.payload = msg.payload;\n\nvar mensaje = telegramMsg.payload.estado_puerta;\n\ntelegramMsg.payload = {\n        \"chatId\": 1114502551,\n        \"type\":\"message\",\n        \"content\": mensaje\n    }\nreturn telegramMsg;\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 240,
+        "wires": [
+            [
+                "f74c7aabc09c1af8"
+            ]
+        ]
+    },
+    {
+        "id": "616b2c1edd2c7c5a",
+        "type": "ui_toast",
+        "z": "192b46e5418e8275",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "",
+        "x": 1010,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "ad0eab3a192e55d9",
+        "type": "switch",
+        "z": "192b46e5418e8275",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Puerta abierta",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 830,
+        "y": 180,
+        "wires": [
+            [
+                "616b2c1edd2c7c5a"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "2f784116cebce355",
+        "type": "ui_text",
+        "z": "192b46e5418e8275",
+        "group": "fc8784223b190d5b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Estado del sensor",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 850,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "f5497c32ae0cceec",
+        "type": "function",
+        "z": "192b46e5418e8275",
+        "name": "Almacenar info",
+        "func": "//Creacion de variable para almacenar json\nvar textoCSV = {};\n//Copiar los datos del JSON\ntextoCSV.payload = msg.payload;\n\n//Extraer atributos del JSON\nvar user = textoCSV.payload.content.chat.first_name;\nvar date = textoCSV.payload.content.date;\nvar mensaje = textoCSV.payload.content.text;\nvar bot = textoCSV.payload.content.from.first_name;\n\nvar fecha = new Date(date * 1000).toLocaleString();\n\n//Retornar valores en cualquier orden\n\ntextoCSV.payload = {\n    \"nombre_usuario\": user,\n    \"fecha\": fecha,\n    \"estado_puerta\": mensaje,\n    \"bot\": bot\n};\n\n\nreturn textoCSV;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 240,
+        "wires": [
+            [
+                "60818f286030ee6b"
+            ]
+        ]
+    },
+    {
+        "id": "60818f286030ee6b",
+        "type": "csv",
+        "z": "192b46e5418e8275",
+        "name": "CSVMensaje",
+        "spec": "rfc",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "once",
+        "multi": "one",
+        "ret": "\\r\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": false,
+        "include_empty_strings": true,
+        "include_null_values": true,
+        "x": 1210,
+        "y": 240,
+        "wires": [
+            [
+                "71e637f7beda5dfd"
+            ]
+        ]
+    },
+    {
+        "id": "71e637f7beda5dfd",
+        "type": "file",
+        "z": "192b46e5418e8275",
+        "name": "HistorialActivo",
+        "filename": "C:\\Users\\user\\Documents\\historial_activo.csv",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 1380,
+        "y": 240,
+        "wires": [
+            [
+                "c796d0cfcba84d1d"
+            ]
+        ]
+    },
+    {
+        "id": "41ff635a403db1f4",
+        "type": "switch",
+        "z": "192b46e5418e8275",
+        "name": "",
+        "property": "payload.estado_puerta",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Puerta abierta",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 470,
+        "y": 260,
+        "wires": [
+            [
+                "c83e288ff1647a20"
+            ],
+            [
+                "38729434dc6a6d75"
+            ]
+        ]
+    },
+    {
+        "id": "c796d0cfcba84d1d",
+        "type": "debug",
+        "z": "192b46e5418e8275",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1580,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "38729434dc6a6d75",
+        "type": "function",
+        "z": "192b46e5418e8275",
+        "name": "Deteccion Inactiva",
+        "func": "//Creacion de variable para almacenar json\nvar mensajeInactivo = {};\n//Copiar los datos del JSON\nmensajeInactivo.payload = msg.payload;\n//Extraer atributos del JSON\nvar alarma = mensajeInactivo.payload.alarma;\nvar estado_puerta = mensajeInactivo.payload.estado_puerta;\nvar fecha = new Date().toLocaleString();\n//Retornar valores en cualquier orden\n\nmensajeInactivo.payload = {\n    \"estado_sensor\": alarma,\n    \"estado_puerta\": estado_puerta,\n    \"fecha\": fecha\n}\nreturn mensajeInactivo;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 300,
+        "wires": [
+            [
+                "094ec8f874ce92ac"
+            ]
+        ]
+    },
+    {
+        "id": "094ec8f874ce92ac",
+        "type": "csv",
+        "z": "192b46e5418e8275",
+        "name": "CSVMensaje",
+        "spec": "rfc",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "once",
+        "multi": "one",
+        "ret": "\\r\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": false,
+        "include_empty_strings": true,
+        "include_null_values": true,
+        "x": 870,
+        "y": 300,
+        "wires": [
+            [
+                "12df72539d683a72"
+            ]
+        ]
+    },
+    {
+        "id": "12df72539d683a72",
+        "type": "file",
+        "z": "192b46e5418e8275",
+        "name": "HistorialInactivo",
+        "filename": "C:\\Users\\user\\Documents\\historial_inactivo.csv",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 1060,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bc1843be7cf8ea59",
+        "type": "ui_text",
+        "z": "192b46e5418e8275",
+        "group": "fc8784223b190d5b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Estado de la puerta",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 850,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "efdacdd8538ba6ea",
+        "type": "serial-port",
+        "name": "ArduinoUno",
+        "serialport": "COM5",
+        "serialbaud": "9600",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "}",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "fc8784223b190d5b",
+        "type": "ui_group",
+        "name": "Sensor Piroelectrico",
+        "tab": "7015e8be8c30f767",
+        "order": 1,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e4951fa52faf93e8",
+        "type": "telegram bot",
+        "botname": "willzp32bot",
+        "usernames": "scrxsh",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": "600000",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbothost": "0.0.0.0",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "7015e8be8c30f767",
+        "type": "ui_tab",
+        "name": "Lab V. Sensor HC-SR501, JSON, CSV, Servomotor y TelegramBot",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

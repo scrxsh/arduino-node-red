@@ -1,0 +1,955 @@
+[
+    {
+        "id": "d660842d98786b7b",
+        "type": "tab",
+        "label": "Laboratorio 6 - v2.0",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7754f066457f7b91",
+        "type": "serial in",
+        "z": "d660842d98786b7b",
+        "name": "Arduino",
+        "serial": "efdacdd8538ba6ea",
+        "x": 90,
+        "y": 140,
+        "wires": [
+            [
+                "0df2170de8d3d9cc"
+            ]
+        ]
+    },
+    {
+        "id": "1fb505a758f56236",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "Inserción de información a la BD",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nlet ultrasonido = msg.payload.sistema_monitoreo.sensores[0].distancia;\nlet humedad = msg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.humedad;\nlet temperatura = msg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.temperatura;\nlet pir = msg.payload.sistema_monitoreo.sensores[2].estado;\nlet servo = msg.payload.sistema_monitoreo.actuadores[0].angulo_giro;\nlet fecha = msg.payload.sistema_monitoreo.fecha;\n\nnewMsg.topic = \"INSERT INTO `sistema_monitoreo`.`ultrasonido` (`distancia`, `fecha`, `dispositivos_id`) VALUES ('\"+ ultrasonido +\"', '\"+ fecha +\"', '1');\" + \n\"INSERT INTO `sistema_monitoreo`.`dht11` (`humedad`, `temperatura`, `fecha`, `dispositivos_id`) VALUES ('\" + humedad + \"', '\" + temperatura +\"', '\"+ fecha +\"', '2');\" + \n\"INSERT INTO `sistema_monitoreo`.`pir` (`estado`, `fecha`, `dispositivos_id`) VALUES ('\" + pir +\"', '\" + fecha +\"', '3');\" + \n\"INSERT INTO `sistema_monitoreo`.`servo` (`estado`, `fecha`, `dispositivos_id`) VALUES ('\"+ servo +\"', '\" + fecha +\"', '4');\";\n\nnewMsg.payload = [humedad, temperatura, ultrasonido, pir, servo, fecha]\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "3695872c775303a4"
+            ]
+        ]
+    },
+    {
+        "id": "3695872c775303a4",
+        "type": "mysql",
+        "z": "d660842d98786b7b",
+        "mydb": "7e0b08ac3b4917a8",
+        "name": "Monitoreo_Sensores",
+        "x": 840,
+        "y": 160,
+        "wires": [
+            [
+                "47f9785357d2a551"
+            ]
+        ]
+    },
+    {
+        "id": "47f9785357d2a551",
+        "type": "debug",
+        "z": "d660842d98786b7b",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1040,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "746ea29bc5a71231",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "UI_DHT11",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\nvar humedad = {}\nhumedad.payload = newMsg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.humedad;\nreturn humedad;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 320,
+        "wires": [
+            [
+                "783c5654c469671d",
+                "4cb3ee1e9506e737"
+            ]
+        ]
+    },
+    {
+        "id": "783c5654c469671d",
+        "type": "ui_gauge",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "group": "dc6d38b5b81fcb5a",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "gtype": "wave",
+        "title": "Humedad Relativa",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "75",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 850,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4cb3ee1e9506e737",
+        "type": "ui_chart",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "group": "dc6d38b5b81fcb5a",
+        "order": 3,
+        "width": "6",
+        "height": "3",
+        "label": "Humedad con el tiempo",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "80",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#3f9b17",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 870,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7c0c7330de7ea609",
+        "type": "ui_gauge",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "group": "e5f787a8306c3bba",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "gtype": "donut",
+        "title": "Temperatura Ambiente",
+        "label": "ºC",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 860,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "90e551eb6b9ea52f",
+        "type": "ui_chart",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "group": "e5f787a8306c3bba",
+        "order": 1,
+        "width": "6",
+        "height": "3",
+        "label": "Temperatura en el tiempo",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "monotone",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "50",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#37b31e",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 870,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a5ce3cbabb0a1c1a",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "UI_Ultrasonido",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\n\nvar ultrasonido = {}\n\nultrasonido.payload = newMsg.payload.sistema_monitoreo.sensores[0].distancia;\n\n\nreturn ultrasonido\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 240,
+        "wires": [
+            [
+                "1bca1f0470d0f77c",
+                "f720af06c9c181f3"
+            ]
+        ]
+    },
+    {
+        "id": "a280edafc99ab21e",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "UI_PIR",
+        "func": "let estado = msg.payload.sistema_monitoreo.sensores[2].estado;\n\nmsg.payload = {\n    valor: estado,\n    texto: estado === 1 ? \"Activo\" : \"Inactivo\",\n    color: estado === 1 ? \"#FF3B3B\" : \"#00BFFF\" // rojo vivo y azul cielo\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 460,
+        "wires": [
+            [
+                "c91a12f1be8dc653"
+            ]
+        ]
+    },
+    {
+        "id": "f720af06c9c181f3",
+        "type": "ui_chart",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "group": "21f471d32d551c69",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "label": "Distancia",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm",
+        "interpolate": "monotone",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "300",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#13a711",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 840,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1bca1f0470d0f77c",
+        "type": "ui_gauge",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "group": "21f471d32d551c69",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "gtype": "gage",
+        "title": "Distancia Obtenida",
+        "label": "Centimetros",
+        "format": "{{value | number: 0}}",
+        "min": 0,
+        "max": "255",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 870,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "c91a12f1be8dc653",
+        "type": "ui_template",
+        "z": "d660842d98786b7b",
+        "group": "e7b17a3c67240873",
+        "name": "Estado el sensor PIR HC-SR501",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<p style=\"text-align: center; font-size: 20px\">Estado el sensor PIR HC-SR501</p>\n<div\n    style=\"padding: 20px; overflow: visible; display: flex; flex-direction: column; align-items: center; justify-content: center;\">\n    <div style=\"\n    width: 200px;\n    height: 200px;\n    border-radius: 50%;\n    border: 20px solid {{msg.payload.color}};\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    background-color: #1e1e1e;\n    color: white;\n    font-size: 64px;\n    font-weight: bold;\n    transition: all 0.4s ease-in-out;\n  \">\n        {{msg.payload.valor}}\n    </div>\n    <div\n        style=\"margin-top: 20px; font-size: 28px; font-weight: 600; color: {{msg.payload.color}}; text-shadow: 0 0 5px {{msg.payload.color}};\">\n        {{msg.payload.texto}}\n    </div>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 890,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "15a1637bb367e515",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "UI_SERVO",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\nvar servo = {}\nservo.payload = newMsg.payload.sistema_monitoreo.actuadores[0].angulo_giro;\n\nreturn servo\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 500,
+        "wires": [
+            [
+                "d8e567e3dec626c4"
+            ]
+        ]
+    },
+    {
+        "id": "d8e567e3dec626c4",
+        "type": "ui_text",
+        "z": "d660842d98786b7b",
+        "group": "e7b17a3c67240873",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Angulo del servomotor",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 860,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "a9a8a68ea202bab8",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "GPS",
+        "func": "var gps = {};\n\ngps.payload = msg.payload;\n\ngps.payload = {\n    \"name\": \"sistema_monitoreo\",\n    \"lat\": gps.payload.sistema_monitoreo.latitud,\n    \"lon\": gps.payload.sistema_monitoreo.longitud,\n    \"command\":{\n        \"zoom\": 18,\n    },\n    \"label\": \"Fundación Universitaria de San Gil\",\n    \"weblink\": \"https://unisangil.edu.co/?page_id=5302\",\n    \"icon\": \"fa-thumb-tack\",\n    \"iconColor\": \"#060947\"\n}\n\nreturn gps;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 540,
+        "wires": [
+            [
+                "bf9c4ea2ce124522"
+            ]
+        ]
+    },
+    {
+        "id": "bf9c4ea2ce124522",
+        "type": "ui_worldmap",
+        "z": "d660842d98786b7b",
+        "group": "e81da3217d4e8565",
+        "order": 4,
+        "width": "6",
+        "height": "8",
+        "name": "Ubicación",
+        "lat": "5.619946753099799",
+        "lon": "-73.81695983778687",
+        "zoom": "18",
+        "layer": "OSMC",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "hide",
+        "layers": "hide",
+        "panit": "true",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "true",
+        "coords": "deg",
+        "showgrid": "false",
+        "showruler": "false",
+        "allowFileDrop": "true",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN,HM",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,EsriT,EsriDG,NatGeo,UKOS",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 820,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "f931f0241d1fcb56",
+        "type": "worldmap",
+        "z": "d660842d98786b7b",
+        "name": "Ubicación",
+        "lat": "5.619946753099799",
+        "lon": "-73.81695983778687",
+        "zoom": "18",
+        "layer": "OSMC",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "hide",
+        "layers": "hide",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "false",
+        "coords": "none",
+        "showgrid": "false",
+        "showruler": "false",
+        "allowFileDrop": "false",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN,HM",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,EsriT,NatGeo,UKOS,SW",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 160,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "0df2170de8d3d9cc",
+        "type": "json",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 210,
+        "y": 140,
+        "wires": [
+            [
+                "de81e60f68e93275"
+            ]
+        ]
+    },
+    {
+        "id": "de81e60f68e93275",
+        "type": "switch",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "property": "payload.calibracion",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Calibrando sensor PIR....",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Fin de calibración PIR",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 350,
+        "y": 140,
+        "wires": [
+            [
+                "7a098916f7c310c6"
+            ],
+            [
+                "fe0db9bd76e20b4b"
+            ],
+            [
+                "21100228a1499246",
+                "1fb505a758f56236"
+            ]
+        ]
+    },
+    {
+        "id": "21100228a1499246",
+        "type": "json",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 490,
+        "y": 400,
+        "wires": [
+            [
+                "a5ce3cbabb0a1c1a",
+                "746ea29bc5a71231",
+                "438e76b173bed9b6",
+                "a280edafc99ab21e",
+                "15a1637bb367e515",
+                "a9a8a68ea202bab8",
+                "bf5b8ff4cfec7217"
+            ]
+        ]
+    },
+    {
+        "id": "438e76b173bed9b6",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "UI_DHT11",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\nvar temperatura = {}\ntemperatura.payload = newMsg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.temperatura;\nreturn temperatura\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 400,
+        "wires": [
+            [
+                "7c0c7330de7ea609",
+                "90e551eb6b9ea52f"
+            ]
+        ]
+    },
+    {
+        "id": "7a098916f7c310c6",
+        "type": "ui_toast",
+        "z": "d660842d98786b7b",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "Ok",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "Calibrando sensor PIR - Espera un minuto...",
+        "name": "Notificacion Inicio",
+        "x": 570,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fe0db9bd76e20b4b",
+        "type": "ui_toast",
+        "z": "d660842d98786b7b",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Notificacion Final",
+        "x": 570,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "bf5b8ff4cfec7217",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "Mensaje de telegram",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\n\nvar ultrasonido = {}\nvar humedad = {}\nvar temperatura = {}\nvar pir = {}\nvar servo = {}\nvar fecha = {}\n\nultrasonido.payload = newMsg.payload.sistema_monitoreo.sensores[0].distancia;\nhumedad.payload = newMsg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.humedad;\ntemperatura.payload = newMsg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.temperatura;\npir.payload = newMsg.payload.sistema_monitoreo.sensores[2].estado;\nservo.payload = newMsg.payload.sistema_monitoreo.actuadores[0].angulo_giro;\nfecha.payload = newMsg.payload.sistema_monitoreo.fecha;\n\nlet mensaje = `🤖 𝗥𝗘𝗣𝗢𝗥𝗧𝗘 𝗗𝗘 𝗦𝗘𝗡𝗦𝗢𝗥𝗘𝗦 🤖\n───────────────────\n📏 𝗗𝗶𝘀𝘁𝗮𝗻𝗰𝗶𝗮: ${ultrasonido.payload} cm\n🌡️ 𝗧𝗲𝗺𝗽𝗲𝗿𝗮𝘁𝘂𝗿𝗮: ${temperatura.payload}°C\n💧 𝗛𝘂𝗺𝗲𝗱𝗮𝗱: ${humedad.payload}%\n👁️ 𝗦𝗲𝗻𝘀𝗼𝗿 𝗣𝗜𝗥: ${pir.payload}\n⚙️ Á𝗻𝗴𝘂𝗹𝗼 𝗱𝗲 𝘀𝗲𝗿𝘃𝗼: ${servo.payload}°\n🕒 𝗙𝗲𝗰𝗵𝗮: ${fecha.payload}\n───────────────────`;\n\nnewMsg.payload = {\n        \"chatId\": 1114502551,\n        \"type\":\"message\",\n        \"content\": mensaje\n    }\nreturn newMsg;\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 620,
+        "wires": [
+            [
+                "0ffa26959a81f38c"
+            ]
+        ]
+    },
+    {
+        "id": "0ffa26959a81f38c",
+        "type": "telegram sender",
+        "z": "d660842d98786b7b",
+        "name": "BotAlarmas",
+        "bot": "e4951fa52faf93e8",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 870,
+        "y": 620,
+        "wires": [
+            [
+                "353db36d60722f63"
+            ]
+        ]
+    },
+    {
+        "id": "a9a0fde6540c1b37",
+        "type": "mysql",
+        "z": "d660842d98786b7b",
+        "mydb": "7e0b08ac3b4917a8",
+        "name": "Monitoreo_Sensores",
+        "x": 1220,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "353db36d60722f63",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "InserciónBD",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\n\nnewMsg.payload =  msg.payload\nvar user = newMsg.payload.content.chat.first_name;\nvar id = newMsg.payload.content.chat.id;\nvar ubicacion = \"5.619, -73.817\"    \n\nnewMsg.topic = \"INSERT INTO`sistema_monitoreo`.`usuarios`(`id`, `nombre`, `ubicacion`, `email`, `telefono`) VALUES('\" + id + \"', '\" + user + \"', '\" + ubicacion + \"', 'finn8615@gmail.com', '3212579924')\";\nnewMsg.payload = [user, id, ubicacion]\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c0e190f6b2e4cbf6",
+        "type": "inject",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"sistema_monitoreo\":{\"sensores\":[{\"nombre\":\"Sensor Ultrasonico\",\"referencia\":\"HC-SR04\",\"tipo\":\"Digital\",\"distancia\":57},{\"nombre\":\"Sensor de temperatura y humedad\",\"referencia\":\"DHT11\",\"tipo\":\"Digital\",\"datos_obtenidos\":{\"temperatura\":21.2,\"humedad\":48}},{\"nombre\":\"Sensor Piroelectrico\",\"referencia\":\"PIR HC-SR501\",\"tipo\":\"Digital\",\"estado\":1}],\"actuadores\":[{\"nombre\":\"Servomotor de puerta\",\"referencia\":\"SG90\",\"angulo_giro\":180,\"estado\":\"Activo\"}],\"fecha\":\"2025-4-21 13:13:0\"}}",
+        "payloadType": "json",
+        "x": 250,
+        "y": 420,
+        "wires": [
+            [
+                "21100228a1499246",
+                "1fb505a758f56236"
+            ]
+        ]
+    },
+    {
+        "id": "801ddb767978435d",
+        "type": "ui_button",
+        "z": "d660842d98786b7b",
+        "name": "",
+        "group": "a80ec5cec450a635",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "label": "Flitrar ",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 250,
+        "y": 700,
+        "wires": [
+            [
+                "fa7ba1043b476555"
+            ]
+        ]
+    },
+    {
+        "id": "8760cf7b588e9327",
+        "type": "mysql",
+        "z": "d660842d98786b7b",
+        "mydb": "7e0b08ac3b4917a8",
+        "name": "Monitoreo_Sensores",
+        "x": 620,
+        "y": 700,
+        "wires": [
+            [
+                "d7a6358deb5d6fbe"
+            ]
+        ]
+    },
+    {
+        "id": "fa7ba1043b476555",
+        "type": "function",
+        "z": "d660842d98786b7b",
+        "name": "Consultas",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\nnewMsg.topic = \"select usuarios.nombre, dispositivos.nombre, dht11.temperatura, dht11.fecha FROM usuarios INNER JOIN dispositivos ON dispositivos.usuarios_id = usuarios.id INNER JOIN dht11 ON dht11.dispositivos_id = dispositivos.id\"\nreturn newMsg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 700,
+        "wires": [
+            [
+                "8760cf7b588e9327"
+            ]
+        ]
+    },
+    {
+        "id": "d7a6358deb5d6fbe",
+        "type": "ui_table",
+        "z": "d660842d98786b7b",
+        "group": "a80ec5cec450a635",
+        "name": "",
+        "order": 0,
+        "width": "12",
+        "height": "13",
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 810,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "efdacdd8538ba6ea",
+        "type": "serial-port",
+        "name": "ArduinoUno",
+        "serialport": "COM5",
+        "serialbaud": "9600",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "7e0b08ac3b4917a8",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "sistema_monitoreo",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "dc6d38b5b81fcb5a",
+        "type": "ui_group",
+        "name": "Humedad y temperatura",
+        "tab": "f6dc224a54403907",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e5f787a8306c3bba",
+        "type": "ui_group",
+        "name": "Temperatura",
+        "tab": "f6dc224a54403907",
+        "order": 3,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "21f471d32d551c69",
+        "type": "ui_group",
+        "name": "Distancia",
+        "tab": "f6dc224a54403907",
+        "order": 5,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e7b17a3c67240873",
+        "type": "ui_group",
+        "name": "PIR",
+        "tab": "f6dc224a54403907",
+        "order": 6,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e81da3217d4e8565",
+        "type": "ui_group",
+        "name": "Ubicación",
+        "tab": "f6dc224a54403907",
+        "order": 7,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e4951fa52faf93e8",
+        "type": "telegram bot",
+        "botname": "willzp32bot",
+        "usernames": "scrxsh",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": "200",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbothost": "0.0.0.0",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "a80ec5cec450a635",
+        "type": "ui_group",
+        "name": "Consultas",
+        "tab": "3eacc9300ce962d2",
+        "order": 1,
+        "disp": true,
+        "width": "15",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f6dc224a54403907",
+        "type": "ui_tab",
+        "name": "Sistema de Monitoreo 🏠.",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "3eacc9300ce962d2",
+        "type": "ui_tab",
+        "name": "Sistema Monitoreo - Consultas 🏠",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

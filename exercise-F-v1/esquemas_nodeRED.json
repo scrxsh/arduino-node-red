@@ -1,0 +1,333 @@
+[
+    {
+        "id": "46415d1dd3359081",
+        "type": "tab",
+        "label": "Sensores",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "25d3916508a5bdb9",
+        "type": "mysql",
+        "z": "46415d1dd3359081",
+        "mydb": "707c0c45d88e23d5",
+        "name": "Monitoreo_Sensores",
+        "x": 520,
+        "y": 300,
+        "wires": [
+            [
+                "c2b0f662a802389c",
+                "efd1ac0021d4688f"
+            ]
+        ]
+    },
+    {
+        "id": "3128a8f14e98d924",
+        "type": "serial in",
+        "z": "46415d1dd3359081",
+        "name": "Arduino",
+        "serial": "efdacdd8538ba6ea",
+        "x": 110,
+        "y": 180,
+        "wires": [
+            [
+                "1bfbb6dfcdc54721"
+            ]
+        ]
+    },
+    {
+        "id": "3ea9473d879d19ea",
+        "type": "function",
+        "z": "46415d1dd3359081",
+        "name": "Datos",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nlet ultrasonido = msg.payload.sistema_monitoreo.sensores[0].distancia;\nlet humedad = msg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.humedad;\nlet temperatura = msg.payload.sistema_monitoreo.sensores[1].datos_obtenidos.temperatura;\nlet pir = msg.payload.sistema_monitoreo.sensores[2].estado;\nlet servo = msg.payload.sistema_monitoreo.actuadores[0].angulo_giro;\nlet fecha = msg.payload.sistema_monitoreo.fecha;\n\nnewMsg.topic = \"INSERT INTO `monitoreo`.`sensores` (`humedad`, `temperatura`, `ultrasonido`, `pir`, `servo`, `fecha`) \" +\n    \"VALUES ('\" + humedad + \"', '\" + temperatura + \"', '\" + ultrasonido + \"', '\" + pir + \"', '\" + servo + \"', '\" + fecha + \"')\";\n    \nnewMsg.payload = [humedad, temperatura, ultrasonido, pir, servo, fecha]\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 180,
+        "wires": [
+            [
+                "9bc37d609fe7cd91",
+                "74cc25f1d91480a5"
+            ]
+        ]
+    },
+    {
+        "id": "9bc37d609fe7cd91",
+        "type": "debug",
+        "z": "46415d1dd3359081",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "0b24e2a6066a1aa0",
+        "type": "function",
+        "z": "46415d1dd3359081",
+        "name": "Consultas",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\nnewMsg.topic = \"SELECT * FROM sensores WHERE temperatura > 24.3 AND ultrasonido = 161 AND pir = 0\"\nreturn newMsg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 300,
+        "wires": [
+            [
+                "25d3916508a5bdb9"
+            ]
+        ]
+    },
+    {
+        "id": "1bfbb6dfcdc54721",
+        "type": "json",
+        "z": "46415d1dd3359081",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": true,
+        "x": 270,
+        "y": 180,
+        "wires": [
+            [
+                "3ea9473d879d19ea"
+            ]
+        ]
+    },
+    {
+        "id": "74cc25f1d91480a5",
+        "type": "mysql",
+        "z": "46415d1dd3359081",
+        "mydb": "707c0c45d88e23d5",
+        "name": "Monitoreo_Sensores",
+        "x": 580,
+        "y": 200,
+        "wires": [
+            [
+                "0287d96e004da001"
+            ]
+        ]
+    },
+    {
+        "id": "0287d96e004da001",
+        "type": "debug",
+        "z": "46415d1dd3359081",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "2202b4f33b49eaba",
+        "type": "ui_button",
+        "z": "46415d1dd3359081",
+        "name": "",
+        "group": "1002bf22099d4ea5",
+        "order": 1,
+        "width": "14",
+        "height": "2",
+        "passthru": false,
+        "label": "Flitrar ",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "0b24e2a6066a1aa0"
+            ]
+        ]
+    },
+    {
+        "id": "2ae857655cb6a2db",
+        "type": "ui_button",
+        "z": "46415d1dd3359081",
+        "name": "",
+        "group": "1002bf22099d4ea5",
+        "order": 1,
+        "width": "14",
+        "height": "2",
+        "passthru": false,
+        "label": "Flitrar ",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 380,
+        "wires": [
+            [
+                "cf38fbc8375e18dd"
+            ]
+        ]
+    },
+    {
+        "id": "39354155b181b4c0",
+        "type": "mysql",
+        "z": "46415d1dd3359081",
+        "mydb": "707c0c45d88e23d5",
+        "name": "Monitoreo_Sensores",
+        "x": 520,
+        "y": 380,
+        "wires": [
+            [
+                "c2b0f662a802389c",
+                "17f1b8eaa8ca49ab"
+            ]
+        ]
+    },
+    {
+        "id": "c2b0f662a802389c",
+        "type": "ui_table",
+        "z": "46415d1dd3359081",
+        "group": "1002bf22099d4ea5",
+        "name": "",
+        "order": 0,
+        "width": "14",
+        "height": "12",
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 810,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "17f1b8eaa8ca49ab",
+        "type": "debug",
+        "z": "46415d1dd3359081",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "cf38fbc8375e18dd",
+        "type": "function",
+        "z": "46415d1dd3359081",
+        "name": "Consultas",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\nnewMsg.topic = \"SELECT * FROM sensores\"\nreturn newMsg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 380,
+        "wires": [
+            [
+                "39354155b181b4c0"
+            ]
+        ]
+    },
+    {
+        "id": "efd1ac0021d4688f",
+        "type": "debug",
+        "z": "46415d1dd3359081",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "707c0c45d88e23d5",
+        "type": "MySQLdatabase",
+        "name": "Monitoreo_Sensores",
+        "host": "localhost",
+        "port": "3306",
+        "db": "monitoreo",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "efdacdd8538ba6ea",
+        "type": "serial-port",
+        "name": "ArduinoUno",
+        "serialport": "COM5",
+        "serialbaud": "9600",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "1002bf22099d4ea5",
+        "type": "ui_group",
+        "name": "lab6",
+        "tab": "b9d9cdaee5c98b16",
+        "order": 1,
+        "disp": true,
+        "width": "15",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "b9d9cdaee5c98b16",
+        "type": "ui_tab",
+        "name": "LAB6",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

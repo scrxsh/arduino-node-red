@@ -1,0 +1,315 @@
+[
+    {
+        "id": "674c88d40462082d",
+        "type": "tab",
+        "label": "SensorPIR",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f6603f58d55d9b77",
+        "type": "serial in",
+        "z": "674c88d40462082d",
+        "name": "PIR",
+        "serial": "efdacdd8538ba6ea",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "0bb68ca53671c352"
+            ]
+        ]
+    },
+    {
+        "id": "0bb68ca53671c352",
+        "type": "json",
+        "z": "674c88d40462082d",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 350,
+        "y": 300,
+        "wires": [
+            [
+                "2a2ce0f09cd06081",
+                "d77bb739a3b4a1b9",
+                "ff6406f56a2a4f43"
+            ]
+        ]
+    },
+    {
+        "id": "2a2ce0f09cd06081",
+        "type": "function",
+        "z": "674c88d40462082d",
+        "name": "Detección de movimiento",
+        "func": "//Creacion de variable para almacenar json\nvar newMsg = {};\n//Copiar los datos del JSON\nnewMsg.payload = msg.payload;\n\n//Extraer atributos del JSON\nvar pir = {};\nvar alarma = {}\n//Pasar información del json\npir.payload = newMsg.payload.pir;\nalarma.payload = newMsg.payload.alarma;\n//Retornar valores en cualquier orden\n\nreturn [pir, alarma];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 200,
+        "wires": [
+            [
+                "d0ccbc69b6ddfdcc"
+            ],
+            [
+                "326fcf0e0fcc8e6d",
+                "828a78cd41fa2eaa"
+            ]
+        ]
+    },
+    {
+        "id": "d0ccbc69b6ddfdcc",
+        "type": "ui_gauge",
+        "z": "674c88d40462082d",
+        "name": "",
+        "group": "fc8784223b190d5b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "donut",
+        "title": "Estado de HC-SR501",
+        "label": "Activo o Inactivo",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "1",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 880,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "a3957371fd797549",
+        "type": "telegram sender",
+        "z": "674c88d40462082d",
+        "name": "BotAlarmas",
+        "bot": "e4951fa52faf93e8",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 850,
+        "y": 400,
+        "wires": [
+            [
+                "cfde7051045912ec"
+            ]
+        ]
+    },
+    {
+        "id": "d77bb739a3b4a1b9",
+        "type": "function",
+        "z": "674c88d40462082d",
+        "name": "Mensaje de telegram",
+        "func": "//Creacion de variable para almacenar el mensaje a Telegram\n\nvar telegramMsg = {}\n\n\n//Pasar la carga util al metodo msg.payload\ntelegramMsg.payload = msg.payload;\n\nvar mensaje = telegramMsg.payload.alarma;\n\nif(mensaje === \"Sensor PIR activo\")\n{\n    telegramMsg.payload = {\n        \"chatId\": 1114502551,\n        \"type\":\"message\",\n        \"content\": mensaje\n    }\n    return telegramMsg;\n}\n\nelse{\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 400,
+        "wires": [
+            [
+                "a3957371fd797549"
+            ]
+        ]
+    },
+    {
+        "id": "f40574bdde3bbb39",
+        "type": "ui_toast",
+        "z": "674c88d40462082d",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "",
+        "x": 1090,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "326fcf0e0fcc8e6d",
+        "type": "ui_text",
+        "z": "674c88d40462082d",
+        "group": "fc8784223b190d5b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Estado del sensor",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 870,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "cfde7051045912ec",
+        "type": "debug",
+        "z": "674c88d40462082d",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "ff6406f56a2a4f43",
+        "type": "debug",
+        "z": "674c88d40462082d",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "828a78cd41fa2eaa",
+        "type": "switch",
+        "z": "674c88d40462082d",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Sensor PIR activo",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 850,
+        "y": 240,
+        "wires": [
+            [
+                "f40574bdde3bbb39"
+            ],
+            [
+                "7886df278084950f"
+            ]
+        ]
+    },
+    {
+        "id": "7886df278084950f",
+        "type": "debug",
+        "z": "674c88d40462082d",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "efdacdd8538ba6ea",
+        "type": "serial-port",
+        "name": "ArduinoUno",
+        "serialport": "COM5",
+        "serialbaud": "9600",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "}",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "fc8784223b190d5b",
+        "type": "ui_group",
+        "name": "Sensor Piroelectrico",
+        "tab": "dc3244cb853da163",
+        "order": 1,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e4951fa52faf93e8",
+        "type": "telegram bot",
+        "botname": "willzp32bot",
+        "usernames": "scrxsh",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": "600000",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbothost": "0.0.0.0",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "dc3244cb853da163",
+        "type": "ui_tab",
+        "name": "Lab IV. Sensor HC-SR501, JSON y TelegramBot",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
