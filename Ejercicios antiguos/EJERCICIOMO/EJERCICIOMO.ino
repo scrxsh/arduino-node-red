@@ -1,4 +1,4 @@
-const int pinpir = 1;
+const int pinpir = 10; 
 int pirestado = 0;
 
 void setup (){

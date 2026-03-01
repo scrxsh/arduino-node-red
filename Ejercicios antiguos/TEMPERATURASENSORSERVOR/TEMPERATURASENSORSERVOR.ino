@@ -112,10 +112,10 @@ if (t<24) {
     digitalWrite (4,LOW);
   }
   
- Serial.println("La distancia detectada es: ");//IMPRESION DE PANTALLA
- Serial.println(d);
- Serial.println("cm");
- delay (500);
+  Serial.println("La distancia detectada es: ");//IMPRESION DE PANTALLA
+  Serial.println(d);
+  Serial.println("cm");
+  delay (500);
  
 }
 }
