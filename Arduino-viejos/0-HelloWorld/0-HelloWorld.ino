@@ -1,5 +1,6 @@
-void setup() {
+// Hola mundo en Arduino - Tip: PINES DIGITALES SOLO NUMERO, ANALOGICOS A junto al numero
 
+void setup() {
   pinMode(5,OUTPUT); // Pin elegido #5 para el led
 
 }

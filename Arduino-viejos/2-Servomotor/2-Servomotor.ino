@@ -1,23 +1,22 @@
-//Codigo de programacion servomotor :u
+//Hola mundo con el Servomotor de 180 gradps
 //librerias
 #include <Servo.h>
 //Crear objetos
-Servo servo1;
+Servo servoA;
 
 //Configurar el servomotor
 
 void setup()
 {
- servo1.attach (5,600,1500);
- 
+  servoA.attach (5);
 }
 
 void loop ()
 {
-  servo1.write (0);
+  servoA.write (0);
   delay (700);
-  servo1.write (90);
+  servoA.write (90);
   delay (700);
-  servo1.write (180);
+  servoA.write (180);
   delay (700);
 }
