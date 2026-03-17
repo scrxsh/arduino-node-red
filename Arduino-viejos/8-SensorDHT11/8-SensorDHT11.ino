@@ -29,10 +29,10 @@ void loop ()
   Serial.println(humedad);
   Serial.println("%");
 
-  delay (1000);
+  delay (3000);
 
 //Encender el control de temperatura con un ciclo while cuando supere los 25 grados de temperatura
-  while (temp>=25){
+  while (temp>=35){
     Serial.println("ENCIENDE EL VENTILADOR");
     digitalWrite (controlTemp, HIGH);
     temp = dht.readTemperature();
