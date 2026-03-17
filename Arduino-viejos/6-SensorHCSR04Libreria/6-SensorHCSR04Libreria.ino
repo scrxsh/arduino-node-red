@@ -1,20 +1,20 @@
-// Sensor ultrasonico HC - SR04 con libreria
+// Sensor ultrasónico HC-SR04 con librería
 
 #include <NewPing.h>
 
-#define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     11  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define MAX_DISTANCE 255 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+#define TRIGGER_PIN  12  // Pin del Arduino conectado al pin trigger del sensor ultrasónico.
+#define ECHO_PIN     11  // Pin del Arduino conectado al pin echo del sensor ultrasónico.
+#define MAX_DISTANCE 255 // Distancia máxima que queremos medir (en centímetros). La distancia máxima del sensor es de 400-500 cm.
 
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // Configuración de NewPing con los pines y la distancia máxima.
 
 void setup() {
-  Serial.begin(9600); // Open serial monitor at 115200 baud to see ping results.
+  Serial.begin(9600); // Abrir el monitor serial a 9600 baudios para ver los resultados del ping.
 }
 
 void loop() {
-  delay(50);                     // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
-  Serial.print("Ping: ");
-  Serial.print(sonar.ping_cm()); // Send ping, get distance in cm and print result (0 = outside set distance range)
+  delay(50);                     // Esperar 50 ms entre mediciones (aprox. 20 mediciones/seg). 29 ms es el menor tiempo recomendado entre mediciones.
+  Serial.print("Distancia: ");
+  Serial.print(sonar.ping_cm()); // Enviar ping, obtener distancia en cm e imprimir el resultado (0 = fuera del rango configurado)
   Serial.println("cm");
 }
