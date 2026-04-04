@@ -2,6 +2,7 @@
 #include <NewPing.h>
 #include "DHT.h"
 
+//Hacerlo despues con APPInventor + Bluetooth
 //Servo
 Servo servoA;
 Servo servoB;
